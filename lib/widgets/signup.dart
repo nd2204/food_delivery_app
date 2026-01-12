@@ -12,6 +12,7 @@ class SignupFormTitle extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: TopBar(
         spec: TopBarSpec(
+          padding: const EdgeInsetsGeometry.only(left: 24),
           leading: TopBarIconButton(
             icon: Icon(Icons.chevron_left_rounded),
             onPressed: () {

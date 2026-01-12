@@ -8,20 +8,22 @@ class AppBarController extends ValueNotifier<TopBarSpec> {
   void update({
     Widget? leading,
     Widget? title,
-    List<Widget>? actions,
+    Widget? trailing,
+    Widget? background,
     bool? centerTitle,
-    Color? backgroundColor,
+    double? height,
     double? elevation,
     PreferredSizeWidget? bottom,
   }) {
     value = TopBarSpec(
       leading: leading ?? value.leading,
       title: title ?? value.title,
-      actions: actions ?? value.actions,
+      trailing: trailing ?? value.trailing,
       centerTitle: centerTitle ?? value.centerTitle,
-      backgroundColor: backgroundColor ?? value.backgroundColor,
+      background: background ?? value.background,
       elevation: elevation ?? value.elevation,
       bottom: bottom ?? value.bottom,
+      height: height ?? value.height,
     );
   }
 }
@@ -30,19 +32,23 @@ class TopBarSpec {
   const TopBarSpec({
     this.leading,
     this.title,
-    this.actions = const [],
-    this.centerTitle = true,
-    this.backgroundColor = Colors.transparent,
+    this.trailing,
+    this.centerTitle = false,
+    this.height = 45,
+    this.background,
     this.elevation,
     this.bottom,
+    this.padding = const EdgeInsetsGeometry.all(0),
   });
 
   final Widget? leading;
   final Widget? title;
-  final List<Widget> actions;
+  final Widget? trailing;
   final bool centerTitle;
-  final Color? backgroundColor;
+  final Widget? background;
   final double? elevation;
+  final double height;
+  final EdgeInsetsGeometry padding;
   final PreferredSizeWidget? bottom;
 }
 
@@ -61,76 +67,61 @@ class AppBarScope extends InheritedNotifier<AppBarController> {
 }
 
 class TopBarIconButton extends IconButton {
-  TopBarIconButton({super.key, required super.onPressed, required super.icon})
-    : super(
-        style: IconButton.styleFrom(
-          backgroundColor: Colors.white,
-          elevation: 2,
-          shape: const CircleBorder(),
-          fixedSize: const Size(45, 45),
-        ),
-      );
+  TopBarIconButton({
+    super.key,
+    required super.onPressed,
+    required super.icon,
+    Color? backgroundColor = Colors.white,
+  }) : super(
+         style: IconButton.styleFrom(
+           backgroundColor: backgroundColor,
+           elevation: 2,
+           shape: const CircleBorder(),
+           fixedSize: const Size(45, 45),
+         ),
+       );
 }
 
 class TopBarContainer extends StatelessWidget {
-  const TopBarContainer({
-    super.key,
-    this.leading,
-    this.title,
-    this.trailing,
-    this.height = kToolbarHeight,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16),
-    this.background,
-  });
-
-  final Widget? leading;
-  final Widget? title;
-  final Widget? trailing;
-  final double height;
-  final EdgeInsets padding;
-
-  /// Put anything here: transparent, blur, gradient, solid color...
-  final Widget? background;
+  final TopBarSpec spec;
+  const TopBarContainer({required this.spec, super.key});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
       child: SizedBox(
-        height: height,
+        height: spec.height,
         child: Stack(
           children: [
             // Background layer (optional)
-            if (background != null) Positioned.fill(child: background!),
+            if (spec.background != null)
+              Positioned.fill(child: spec.background!),
 
             // Foreground content
             Padding(
-              padding: padding,
+              padding: spec.padding,
               child: Row(
+                spacing: 8,
+                mainAxisAlignment: .spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 48,
-                    height: 48,
-                    child: Center(child: leading),
+                  Row(
+                    children: [
+                      Center(child: spec.leading),
+                      spec.title != null
+                          ? Padding(
+                              padding: EdgeInsetsGeometry.only(left: 18),
+                              child: spec.title,
+                            )
+                          : const SizedBox.shrink(),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: DefaultTextStyle(
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      child: title ?? const SizedBox.shrink(),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   SizedBox(
                     width: 48,
                     height: 48,
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: trailing,
+                      child: spec.trailing,
                     ),
                   ),
                 ],

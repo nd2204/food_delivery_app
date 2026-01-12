@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: "Sen",
         colorScheme: .fromSeed(
+          surfaceContainer: Color(0xFFECF0F4),
           onSurfaceVariant: Color(0xFF646982),
           primary: Color(0xFFFF7622),
           primaryContainer: Color(0xFFFFE1CE),

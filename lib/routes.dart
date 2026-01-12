@@ -15,6 +15,7 @@ enum AppRoute {
   authForgotPassword("/auth/recover"),
   home("/home"),
   search("/search"),
+  selected("/food"),
   foodDetails("/food-details");
 
   final String name;

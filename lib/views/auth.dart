@@ -99,10 +99,7 @@ class _AuthPageState extends State<AuthPage> {
                     SafeArea(
                       child: Column(
                         children: [
-                          TopBarContainer(
-                            leading: spec.leading,
-                            title: spec.title,
-                          ),
+                          TopBarContainer(spec: spec),
                           form.title,
                         ],
                       ),

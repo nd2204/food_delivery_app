@@ -9,6 +9,7 @@ class ForgotPasswordFormTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return TopBar(
       spec: TopBarSpec(
+        padding: const EdgeInsetsGeometry.only(left: 24),
         leading: TopBarIconButton(
           icon: Icon(Icons.chevron_left_rounded),
           onPressed: () {
