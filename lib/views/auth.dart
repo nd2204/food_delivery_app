@@ -19,7 +19,7 @@ class AuthPageWidget {
       case .authLogin:
         return .new(LoginFormTitle(), LoginFormBody());
       case .authSignup:
-        return .new(SignupFormTitle(), SignupFormBody());
+        return .new(SignupFormTitle(), SignUpFormBody());
       case .authVerify:
         return .new(LoginFormTitle(), LoginFormBody());
       case .authForgotPassword:

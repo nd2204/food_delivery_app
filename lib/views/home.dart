@@ -31,22 +31,22 @@ class HomePage extends StatelessWidget {
             Column(
               children: [
                 _HomeLabel("All Categories", onPressed: () {}),
-                ListView(
-                  scrollDirection: .horizontal,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          width: 147,
-                          height: 147,
-                          decoration: BoxDecoration(
-                            color: colors.secondaryContainer,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                // ListView(
+                //   scrollDirection: .horizontal,
+                //   children: [
+                //     Stack(
+                //       children: [
+                //         Container(
+                //           width: 147,
+                //           height: 147,
+                //           decoration: BoxDecoration(
+                //             color: colors.secondaryContainer,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ],
+                // ),
               ],
             ),
             Column(

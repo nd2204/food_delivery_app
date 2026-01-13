@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/routes.dart';
+import 'package:food_delivery_app/utils/injection.dart';
+import 'package:food_delivery_app/viewmodels/login_view_model.dart';
 import 'package:food_delivery_app/widgets/labeled_text_field.dart';
 import 'package:food_delivery_app/widgets/password_field.dart';
-import 'package:food_delivery_app/widgets/social_button.dart';
 
 class LoginFormTitle extends StatelessWidget {
   const LoginFormTitle({super.key});
@@ -36,34 +37,10 @@ class LoginFormTitle extends StatelessWidget {
   }
 }
 
-class LoginFormBody extends StatefulWidget {
-  const LoginFormBody({super.key});
+class LoginFormBody extends StatelessWidget {
+  final LoginViewModel _loginViewModel;
 
-  @override
-  State<LoginFormBody> createState() => _LoginFormBodyState();
-}
-
-class _LoginFormBodyState extends State<LoginFormBody> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool remember = false;
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  void _onChanged(bool? value) {
-    setState(() {
-      remember = value ?? remember;
-    });
-  }
-
-  void _onLogin(BuildContext context) {
-    Navigator.pushReplacementNamed(context, AppRoute.home.name);
-  }
+  LoginFormBody({super.key}) : _loginViewModel = getIt.get<LoginViewModel>();
 
   void _onFacebook() {
     print("onFacebook");
@@ -90,19 +67,16 @@ class _LoginFormBodyState extends State<LoginFormBody> {
             LabeledTextField(
               label: "EMAIL",
               hintText: "example@gmail.com",
-              controller: emailController,
+              controller: _loginViewModel.emailController,
             ),
-            PasswordField(controller: passwordController),
+            PasswordField(
+              label: "PASSWORD",
+              controller: _loginViewModel.passwordController,
+              hintText: "Enter your password",
+            ),
             Row(
               children: [
-                Checkbox(
-                  value: remember,
-                  onChanged: _onChanged,
-                  visualDensity: VisualDensity.compact,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
+                _LoginCheckbox(loginViewModel: _loginViewModel),
                 const SizedBox(width: 4),
                 Text(
                   'Remember me',
@@ -130,19 +104,8 @@ class _LoginFormBodyState extends State<LoginFormBody> {
                 ),
               ],
             ),
-            FilledButton(
-              onPressed: () => _onLogin(context),
-              style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                "LOG IN",
-                style: TextStyle(fontSize: 14, fontWeight: .w600),
-              ),
-            ),
+
+            _LoginButton(loginViewModel: _loginViewModel),
 
             // Signup
             Row(
@@ -196,17 +159,17 @@ class _LoginFormBodyState extends State<LoginFormBody> {
                 Row(
                   mainAxisAlignment: .spaceEvenly,
                   children: [
-                    SocialButton(
+                    _SocialButton(
                       icon: FontAwesomeIcons.facebookF,
                       background: const Color(0xFF1877F2),
                       onPressed: _onFacebook,
                     ),
-                    SocialButton(
+                    _SocialButton(
                       icon: FontAwesomeIcons.apple,
                       background: Colors.black,
                       onPressed: _onApple,
                     ),
-                    SocialButton(
+                    _SocialButton(
                       icon: FontAwesomeIcons.google,
                       background: Colors.white,
                       iconColor: Colors.black,
@@ -220,6 +183,120 @@ class _LoginFormBodyState extends State<LoginFormBody> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _LoginButton extends StatelessWidget {
+  final LoginViewModel _loginViewModel;
+
+  const _LoginButton({required LoginViewModel loginViewModel})
+    : _loginViewModel = loginViewModel;
+
+  void _onLogin(BuildContext context) {
+    _loginViewModel
+        .signInWithEmailAndPassword(
+          _loginViewModel.emailController.text,
+          _loginViewModel.passwordController.text,
+        )
+        .then((success) {
+          if (success) {
+          } else {
+            print(_loginViewModel.errorMessage);
+          }
+          // Navigator.pushReplacementNamed(context, AppRoute.home.name);
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: _loginViewModel,
+      builder: (context, child) {
+        final colors = Theme.of(context).colorScheme;
+        final isLoading = _loginViewModel.isLoading;
+
+        return FilledButton(
+          onPressed: () => _onLogin(context),
+          style: FilledButton.styleFrom(
+            backgroundColor: (isLoading) ? colors.secondaryContainer : null,
+            padding: EdgeInsets.symmetric(vertical: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: (isLoading)
+              ? SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth:
+                        2.5, // Thinner stroke looks better inside buttons
+                    color: colors.onSecondaryContainer,
+                  ),
+                )
+              : Text(
+                  "LOG IN",
+                  style: TextStyle(fontSize: 14, fontWeight: .w600),
+                ),
+        );
+      },
+    );
+  }
+}
+
+class _LoginCheckbox extends StatelessWidget {
+  const _LoginCheckbox({required LoginViewModel loginViewModel})
+    : _loginViewModel = loginViewModel;
+
+  final LoginViewModel _loginViewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: _loginViewModel.rememberNotifier,
+      builder: (context, value, child) {
+        return Checkbox(
+          value: value,
+          onChanged: _loginViewModel.rememberNotifier.toggleRememberMe,
+          visualDensity: VisualDensity.compact,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        );
+      },
+    );
+  }
+}
+
+class _SocialButton extends StatelessWidget {
+  final IconData icon;
+  final Color background;
+  final Color iconColor;
+  final Border? border;
+  final VoidCallback onPressed;
+
+  const _SocialButton({
+    required this.icon,
+    required this.background,
+    required this.onPressed,
+    this.iconColor = Colors.white,
+    this.border,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: onPressed,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: background,
+          shape: BoxShape.circle,
+          border: border,
+        ),
+        child: Center(child: FaIcon(icon, size: 22, color: iconColor)),
+      ),
     );
   }
 }

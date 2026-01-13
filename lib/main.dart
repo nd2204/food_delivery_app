@@ -1,7 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/routes.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:food_delivery_app/utils/injection.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  configureDependencies();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  if (kDebugMode) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  }
+
   runApp(const MyApp());
 }
 
@@ -15,7 +30,9 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'FoodDeliveryApp',
-      initialRoute: AppRoute.onboarding.name,
+      initialRoute: FirebaseAuth.instance.currentUser == null
+          ? AppRoute.onboarding.name
+          : AppRoute.home.name,
       onGenerateRoute: generateRoute,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

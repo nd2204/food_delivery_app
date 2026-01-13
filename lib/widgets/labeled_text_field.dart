@@ -47,6 +47,7 @@ class LabeledTextField extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: TextFormField(
             controller: controller,
+            autocorrect: false,
             obscureText: obscureText,
             validator: validator,
             keyboardType: keyboardType,

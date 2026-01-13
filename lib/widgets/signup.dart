@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/viewmodels/signup_view_model.dart';
 import 'package:food_delivery_app/widgets/labeled_text_field.dart';
 import 'package:food_delivery_app/widgets/password_field.dart';
 import 'package:food_delivery_app/widgets/top_bar.dart';
@@ -48,41 +49,10 @@ class SignupFormTitle extends StatelessWidget {
   }
 }
 
-class SignupFormBody extends StatefulWidget {
-  const SignupFormBody({super.key});
+class SignUpFormBody extends StatelessWidget {
+  final SignUpViewModel _signUpViewModel;
 
-  @override
-  State<SignupFormBody> createState() => _SignupFormBodyState();
-}
-
-class _SignupFormBodyState extends State<SignupFormBody> {
-  late final TextEditingController nameController;
-  late final TextEditingController emailController;
-  late final TextEditingController passwordController;
-  late final TextEditingController retypeController;
-  bool remember = false;
-
-  void _onSignup() {
-    throw UnimplementedError();
-  }
-
-  @override
-  void initState() {
-    nameController = TextEditingController();
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    retypeController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    retypeController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  SignUpFormBody({super.key}) : _signUpViewModel = SignUpViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -97,40 +67,67 @@ class _SignupFormBodyState extends State<SignupFormBody> {
             LabeledTextField(
               label: "NAME",
               hintText: "john doe",
-              controller: nameController,
+              controller: _signUpViewModel.nameController,
             ),
             LabeledTextField(
               label: "EMAIL",
               hintText: "example@gmail.com",
-              controller: emailController,
+              controller: _signUpViewModel.emailController,
             ),
             PasswordField(
+              label: 'PASSWORD',
               hintText: "Enter your password",
-              controller: passwordController,
+              controller: _signUpViewModel.passwordController,
             ),
             PasswordField(
               label: "RE-TYPE PASSWORD",
               hintText: "Re-type your password",
-              controller: retypeController,
+              controller: _signUpViewModel.reTypeController,
             ),
           ],
         ),
-        SafeArea(
-          child: FilledButton(
-            onPressed: _onSignup,
-            style: FilledButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              "SIGN UP",
-              style: TextStyle(fontSize: 14, fontWeight: .bold),
+        SafeArea(child: _SignupButton(signUpViewModel: _signUpViewModel)),
+      ],
+    );
+  }
+}
+
+class _SignupButton extends StatelessWidget {
+  final SignUpViewModel _signUpViewModel;
+
+  const _SignupButton({required SignUpViewModel signUpViewModel})
+    : _signUpViewModel = signUpViewModel;
+
+  void _onSignup() {
+    _signUpViewModel
+        .createUserWithEmailAndPassword(
+          _signUpViewModel.emailController.text,
+          _signUpViewModel.passwordController.text,
+        )
+        .then((success) {
+          print(success);
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: _signUpViewModel,
+      builder: (context, child) {
+        return FilledButton(
+          onPressed: _onSignup,
+          style: FilledButton.styleFrom(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
-        ),
-      ],
+          child: Text(
+            "SIGN UP",
+            style: TextStyle(fontSize: 14, fontWeight: .bold),
+          ),
+        );
+      },
     );
   }
 }
