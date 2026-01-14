@@ -30,108 +30,90 @@ class AuthPageWidget {
   }
 }
 
-class AuthPage extends StatefulWidget {
-  final AppRoute route;
+class AuthPage extends StatelessWidget {
+  final AppBarController _appBarController = AppBarController();
+  final AppRoute _route;
 
-  const AuthPage({super.key, required this.route});
-
-  @override
-  State<AuthPage> createState() => _AuthPageState();
-}
-
-class _AuthPageState extends State<AuthPage> {
-  late final AppBarController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = AppBarController();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  AuthPage({super.key, required AppRoute route}) : _route = route;
 
   @override
   Widget build(BuildContext context) {
     final colorscheme = Theme.of(context).colorScheme;
     final media = MediaQuery.of(context);
     final w = media.size.width;
-    final AuthPageWidget form = .getFormByRoute(widget.route);
+    final AuthPageWidget form = .getFormByRoute(_route);
 
     return AppBarScope(
-      controller: controller,
-      child: ValueListenableBuilder(
-        valueListenable: controller,
-        builder: (context, spec, child) {
-          return Scaffold(
-            backgroundColor: colorscheme.tertiary,
-            body: Stack(
+      controller: _appBarController,
+      child: Scaffold(
+        backgroundColor: colorscheme.tertiary,
+        body: Stack(
+          children: [
+            Positioned(
+              top: -130,
+              left: -130,
+              child: SvgPicture.asset(
+                "assets/svgs/auth-bg-decorator-1.svg",
+                colorFilter: ColorFilter.mode(
+                  colorscheme.tertiaryContainer,
+                  .srcIn,
+                ),
+              ),
+            ),
+            Positioned(
+              top: -90,
+              right: -100,
+              child: SvgPicture.asset(
+                "assets/svgs/auth-bg-decorator-2.svg",
+                colorFilter: ColorFilter.mode(
+                  colorscheme.tertiaryContainer,
+                  .srcIn,
+                ),
+              ),
+            ),
+            Column(
+              mainAxisSize: .max,
+              mainAxisAlignment: .spaceBetween,
               children: [
-                Positioned(
-                  top: -130,
-                  left: -130,
-                  child: SvgPicture.asset(
-                    "assets/svgs/auth-bg-decorator-1.svg",
-                    colorFilter: ColorFilter.mode(
-                      colorscheme.tertiaryContainer,
-                      .srcIn,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: -90,
-                  right: -100,
-                  child: SvgPicture.asset(
-                    "assets/svgs/auth-bg-decorator-2.svg",
-                    colorFilter: ColorFilter.mode(
-                      colorscheme.tertiaryContainer,
-                      .srcIn,
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisSize: .max,
-                  mainAxisAlignment: .spaceBetween,
-                  children: [
-                    SafeArea(
-                      child: Column(
-                        children: [
-                          TopBarContainer(spec: spec),
-                          form.title,
-                        ],
+                SafeArea(
+                  child: Column(
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _appBarController,
+                        builder: (context, spec, child) {
+                          return TopBarContainer(spec: spec);
+                        },
                       ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        children: [
-                          Container(
-                            width: w,
-                            decoration: BoxDecoration(
-                              color: colorscheme.onTertiary,
-                              shape: BoxShape.rectangle,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(24),
-                                topRight: Radius.circular(24),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: form.body,
-                            ),
+                      form.title,
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: w,
+                        decoration: BoxDecoration(
+                          color: colorscheme.onTertiary,
+                          shape: BoxShape.rectangle,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
                           ),
-                        ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: form.body,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
