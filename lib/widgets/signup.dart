@@ -15,7 +15,7 @@ class SignupFormTitle extends StatelessWidget {
         spec: TopBarSpec(
           padding: const EdgeInsetsGeometry.only(left: 24),
           leading: TopBarIconButton(
-            icon: Icon(Icons.chevron_left_rounded),
+            icon: const Icon(Icons.chevron_left_rounded),
             onPressed: () {
               Navigator.maybePop(context);
             },
@@ -117,7 +117,7 @@ class _SignupButton extends StatelessWidget {
         return FilledButton(
           onPressed: _onSignup,
           style: FilledButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

@@ -31,89 +31,79 @@ class AuthPageWidget {
 }
 
 class AuthPage extends StatelessWidget {
-  final AppBarController _appBarController = AppBarController();
-  final AppRoute _route;
+  final AppRoute route;
 
-  AuthPage({super.key, required AppRoute route}) : _route = route;
+  const AuthPage({super.key, required this.route});
 
   @override
   Widget build(BuildContext context) {
+    final AppBarController appBarController = AppBarController();
     final colorscheme = Theme.of(context).colorScheme;
     final media = MediaQuery.of(context);
     final w = media.size.width;
-    final AuthPageWidget form = .getFormByRoute(_route);
+    final AuthPageWidget form = .getFormByRoute(route);
 
-    return AppBarScope(
-      controller: _appBarController,
-      child: Scaffold(
-        backgroundColor: colorscheme.tertiary,
-        body: Stack(
-          children: [
-            Positioned(
-              top: -130,
-              left: -130,
-              child: SvgPicture.asset(
-                "assets/svgs/auth-bg-decorator-1.svg",
-                colorFilter: ColorFilter.mode(
-                  colorscheme.tertiaryContainer,
-                  .srcIn,
-                ),
+    return Scaffold(
+      backgroundColor: colorscheme.tertiary,
+      body: Stack(
+        children: [
+          Positioned(
+            top: -130,
+            left: -130,
+            child: SvgPicture.asset(
+              "assets/svgs/auth-bg-decorator-1.svg",
+              colorFilter: ColorFilter.mode(
+                colorscheme.tertiaryContainer,
+                .srcIn,
               ),
             ),
-            Positioned(
-              top: -90,
-              right: -100,
-              child: SvgPicture.asset(
-                "assets/svgs/auth-bg-decorator-2.svg",
-                colorFilter: ColorFilter.mode(
-                  colorscheme.tertiaryContainer,
-                  .srcIn,
-                ),
+          ),
+          Positioned(
+            top: -90,
+            right: -100,
+            child: SvgPicture.asset(
+              "assets/svgs/auth-bg-decorator-2.svg",
+              colorFilter: ColorFilter.mode(
+                colorscheme.tertiaryContainer,
+                .srcIn,
               ),
             ),
-            Column(
-              mainAxisSize: .max,
-              mainAxisAlignment: .spaceBetween,
-              children: [
-                SafeArea(
-                  child: Column(
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: _appBarController,
-                        builder: (context, spec, child) {
-                          return TopBarContainer(spec: spec);
-                        },
-                      ),
-                      form.title,
-                    ],
-                  ),
+          ),
+          Column(
+            mainAxisSize: .max,
+            mainAxisAlignment: .spaceBetween,
+            children: [
+              AppBarScope(
+                controller: appBarController,
+                child: SafeArea(
+                  child: Column(children: [TopBarContainer(), form.title]),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: w,
-                        decoration: BoxDecoration(
-                          color: colorscheme.onTertiary,
-                          shape: BoxShape.rectangle,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(24),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: form.body,
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Container(
+                      width: w,
+                      decoration: BoxDecoration(
+                        color: colorscheme.onTertiary,
+                        shape: BoxShape.rectangle,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
                         ),
                       ),
-                    ],
-                  ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: form.body,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

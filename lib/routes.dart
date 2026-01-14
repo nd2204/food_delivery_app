@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/views/auth.dart';
 import 'package:food_delivery_app/views/home.dart';
 import 'package:food_delivery_app/views/onboarding.dart';
+import 'package:food_delivery_app/views/profile.dart';
 import 'package:food_delivery_app/views/unknown.dart';
 
 final Map<String, AppRoute> _registered = {};
@@ -16,6 +17,8 @@ enum AppRoute {
   home("/home"),
   search("/search"),
   selected("/food"),
+  message("/message"),
+  profile("/profile"),
   foodDetails("/food-details");
 
   final String name;
@@ -33,10 +36,11 @@ void registerAppRoute() {
   }
 }
 
-final Map<String, dynamic> routes = {
-  AppRoute.onboarding.name: (_) => const OnboardingPage(),
-  AppRoute.home.name: (_) => const HomePage(),
-  AppRoute.search.name: (_) => const HomePage(),
+final Map<String, Widget Function()> routes = {
+  AppRoute.onboarding.name: () => const OnboardingPage(),
+  AppRoute.home.name: () => const HomePage(),
+  AppRoute.search.name: () => const HomePage(),
+  AppRoute.profile.name: () => const ProfilePage(),
 };
 
 Route<dynamic>? Function(RouteSettings)? generateRoute = (settings) {
@@ -44,10 +48,12 @@ Route<dynamic>? Function(RouteSettings)? generateRoute = (settings) {
     return MaterialPageRoute(
       builder: (_) => AuthPage(route: AppRoute.fromName(settings.name!)),
     );
-  }
-
-  if (routes.containsKey(settings.name)) {
-    return MaterialPageRoute(builder: routes[settings.name]);
+  } else if (routes.containsKey(settings.name)) {
+    return MaterialPageRoute(
+      builder: (context) {
+        return routes[settings.name]!();
+      },
+    );
   }
 
   // Unknown route fallback

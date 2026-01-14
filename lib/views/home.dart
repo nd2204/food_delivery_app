@@ -13,47 +13,87 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
+    final AppBarController appBarController = AppBarController(
+      buildTopBarSpec(context, colors),
+    );
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            HomeTopBar(colors: colors),
-            const SizedBox(height: 24),
-            const _HomeGreetText(),
-            const SizedBox(height: 16),
-            AppSearchBar(
-              controller: null,
-              onTap: () => Navigator.pushNamed(context, AppRoute.search.name),
-              hintText: 'Search dishes, restaurants',
-            ),
-            const SizedBox(height: 32),
-            Column(
-              children: [
-                _HomeLabel("All Categories", onPressed: () {}),
-                // ListView(
-                //   scrollDirection: .horizontal,
-                //   children: [
-                //     Stack(
-                //       children: [
-                //         Container(
-                //           width: 147,
-                //           height: 147,
-                //           decoration: BoxDecoration(
-                //             color: colors.secondaryContainer,
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ],
-                // ),
-              ],
-            ),
-            Column(
-              children: [_HomeLabel("Open Restaurants", onPressed: () {})],
-            ),
-          ],
+        child: AppBarScope(
+          controller: appBarController,
+          child: Column(
+            children: [
+              TopBarContainer(),
+              const SizedBox(height: 24),
+              const _HomeGreetText(),
+              const SizedBox(height: 16),
+              AppSearchBar(
+                controller: null,
+                onTap: () => Navigator.pushNamed(context, AppRoute.search.name),
+                hintText: 'Search dishes, restaurants',
+              ),
+              const SizedBox(height: 32),
+              Column(
+                children: [
+                  _HomeLabel("All Categories", onPressed: () {}),
+                  // ListView(
+                  //   scrollDirection: .horizontal,
+                  //   children: [
+                  //     Stack(
+                  //       children: [
+                  //         Container(
+                  //           width: 147,
+                  //           height: 147,
+                  //           decoration: BoxDecoration(
+                  //             color: colors.secondaryContainer,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                ],
+              ),
+              Column(
+                children: [_HomeLabel("Open Restaurants", onPressed: () {})],
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  TopBarSpec buildTopBarSpec(BuildContext context, ColorScheme colors) {
+    return TopBarSpec(
+      leading: TopBarIconButton(
+        onPressed: () {
+          Navigator.pushNamed(context, AppRoute.profile.name);
+        },
+        backgroundColor: colors.surfaceContainer,
+        icon: Icon(Icons.menu_rounded, color: colors.tertiary),
+      ),
+      title: Column(
+        mainAxisAlignment: .center,
+        crossAxisAlignment: .start,
+        children: [
+          Text(
+            style: TextStyle(
+              color: colors.primary,
+              fontSize: 12,
+              fontWeight: .bold,
+            ),
+            "DELIVER TO",
+          ),
+          const Text(style: TextStyle(fontSize: 14), locationName),
+          // TODO: add dropdown
+        ],
+      ),
+      trailing: TopBarIconButton(
+        onPressed: () {},
+        backgroundColor: colors.tertiary,
+        icon: Icon(Icons.shopping_bag, color: colors.onTertiary),
       ),
     );
   }
@@ -110,46 +150,6 @@ class _HomeGreetText extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class HomeTopBar extends StatelessWidget {
-  const HomeTopBar({super.key, required this.colors});
-
-  final ColorScheme colors;
-
-  @override
-  Widget build(BuildContext context) {
-    return TopBarContainer(
-      spec: TopBarSpec(
-        leading: TopBarIconButton(
-          onPressed: () {},
-          backgroundColor: colors.surfaceContainer,
-          icon: Icon(Icons.menu_rounded, color: colors.tertiary),
-        ),
-        title: Column(
-          mainAxisAlignment: .center,
-          crossAxisAlignment: .start,
-          children: [
-            Text(
-              style: TextStyle(
-                color: colors.primary,
-                fontSize: 12,
-                fontWeight: .bold,
-              ),
-              "DELIVER TO",
-            ),
-            const Text(style: TextStyle(fontSize: 14), locationName),
-            // TODO: add dropdown
-          ],
-        ),
-        trailing: TopBarIconButton(
-          onPressed: () {},
-          backgroundColor: colors.tertiary,
-          icon: Icon(Icons.shopping_bag, color: colors.onTertiary),
-        ),
-      ),
     );
   }
 }

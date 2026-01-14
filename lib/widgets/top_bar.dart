@@ -83,52 +83,56 @@ class TopBarIconButton extends IconButton {
 }
 
 class TopBarContainer extends StatelessWidget {
-  final TopBarSpec spec;
-  const TopBarContainer({required this.spec, super.key});
+  const TopBarContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
-      child: SizedBox(
-        height: spec.height,
-        child: Stack(
-          children: [
-            // Background layer (optional)
-            if (spec.background != null)
-              Positioned.fill(child: spec.background!),
+      child: ValueListenableBuilder(
+        valueListenable: AppBarScope.of(context),
+        builder: (context, spec, child) {
+          return SizedBox(
+            height: spec.height,
+            child: Stack(
+              children: [
+                // Background layer (optional)
+                if (spec.background != null)
+                  Positioned.fill(child: spec.background!),
 
-            // Foreground content
-            Padding(
-              padding: spec.padding,
-              child: Row(
-                spacing: 8,
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  Row(
+                // Foreground content
+                Padding(
+                  padding: spec.padding,
+                  child: Row(
+                    spacing: 8,
+                    mainAxisAlignment: .spaceBetween,
                     children: [
-                      Center(child: spec.leading),
-                      spec.title != null
-                          ? Padding(
-                              padding: EdgeInsetsGeometry.only(left: 18),
-                              child: spec.title,
-                            )
-                          : const SizedBox.shrink(),
+                      Row(
+                        children: [
+                          Center(child: spec.leading),
+                          spec.title != null
+                              ? Padding(
+                                  padding: EdgeInsetsGeometry.only(left: 18),
+                                  child: spec.title,
+                                )
+                              : const SizedBox.shrink(),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: spec.trailing,
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    width: 48,
-                    height: 48,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: spec.trailing,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_delivery_app/utils/errors.dart';
 import 'package:injectable/injectable.dart';
 
-extension FirebaseUserClaims on UserCredential {
+extension FirebaseUserClaims on User {
   UserClaims toUserClaims() {
-    return UserClaims();
+    return UserClaims(displayName: displayName!, email: email!);
   }
 }
 
@@ -21,7 +21,7 @@ class FirebaseAuthService implements AuthService {
     try {
       return FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password)
-          .then((cred) => cred.toUserClaims());
+          .then((cred) => cred.user!.toUserClaims());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         throw AuthenticationError('The password provided is too weak.');
@@ -41,7 +41,7 @@ class FirebaseAuthService implements AuthService {
     try {
       return FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((cred) => cred.toUserClaims());
+          .then((cred) => cred.user!.toUserClaims());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw AuthenticationError('No user found for that email.');
@@ -57,5 +57,15 @@ class FirebaseAuthService implements AuthService {
   @override
   Future<void> signOut() {
     return FirebaseAuth.instance.signOut();
+  }
+
+  @override
+  UserClaims? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser?.toUserClaims();
+  }
+
+  @override
+  Future<void> updateDisplayName(String displayName) {
+    return FirebaseAuth.instance.currentUser!.updateDisplayName(displayName);
   }
 }

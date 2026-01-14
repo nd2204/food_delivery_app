@@ -193,19 +193,33 @@ class _LoginButton extends StatelessWidget {
   const _LoginButton({required LoginViewModel loginViewModel})
     : _loginViewModel = loginViewModel;
 
-  void _onLogin(BuildContext context) {
-    _loginViewModel
-        .signInWithEmailAndPassword(
-          _loginViewModel.emailController.text,
-          _loginViewModel.passwordController.text,
-        )
-        .then((success) {
-          if (success) {
-          } else {
-            print(_loginViewModel.errorMessage);
-          }
-          // Navigator.pushReplacementNamed(context, AppRoute.home.name);
-        });
+  void _onLogin(BuildContext context) async {
+    final success = await _loginViewModel.signInWithEmailAndPassword(
+      _loginViewModel.emailController.text,
+      _loginViewModel.passwordController.text,
+    );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      Navigator.pushReplacementNamed(context, AppRoute.home.name);
+    } else {
+      final String errorMessage = _loginViewModel.errorMessage ?? "";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          duration: const Duration(milliseconds: 5000),
+          width: 280.0, // Width of the SnackBar.
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0, // Inner padding for SnackBar content.
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
+    }
   }
 
   @override

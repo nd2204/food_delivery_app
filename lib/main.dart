@@ -28,6 +28,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     registerAppRoute();
 
+    // FirebaseAuth.instance.signOut();
+
     return MaterialApp(
       title: 'FoodDeliveryApp',
       initialRoute: FirebaseAuth.instance.currentUser == null
