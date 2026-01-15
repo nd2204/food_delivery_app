@@ -9,6 +9,9 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:food_delivery_app/repositories/conversation_repo.dart' as _i380;
+import 'package:food_delivery_app/repositories/firestore_conversation_repo.dart'
+    as _i918;
 import 'package:food_delivery_app/services/auth_service.dart' as _i247;
 import 'package:food_delivery_app/services/firebase_auth_service.dart'
     as _i1038;
@@ -28,6 +31,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i899.SignUpViewModel>(() => _i899.SignUpViewModel());
     gh.lazySingleton<_i247.AuthService>(
       () => const _i1038.FirebaseAuthService(),
+    );
+    gh.lazySingleton<_i380.IConversationRepository>(
+      () => _i918.FirestoreConversationRepository(),
     );
     return this;
   }

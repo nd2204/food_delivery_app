@@ -6,15 +6,13 @@ class MessagingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppBarController controller = AppBarController(TopBarSpec());
+
     return Scaffold(
       body: AppBarScope(
-        controller: null,
-        child: Column(
-          children: [
-            TopBarContainer(spec: spec)
-          ],
-        ),
+        controller: controller,
+        child: Column(children: [TopBarContainer()]),
       ),
-    )
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/routes.dart';
 import 'package:food_delivery_app/viewmodels/signup_view_model.dart';
 import 'package:food_delivery_app/widgets/labeled_text_field.dart';
 import 'package:food_delivery_app/widgets/password_field.dart';
@@ -98,15 +99,33 @@ class _SignupButton extends StatelessWidget {
   const _SignupButton({required SignUpViewModel signUpViewModel})
     : _signUpViewModel = signUpViewModel;
 
-  void _onSignup() {
-    _signUpViewModel
-        .createUserWithEmailAndPassword(
-          _signUpViewModel.emailController.text,
-          _signUpViewModel.passwordController.text,
-        )
-        .then((success) {
-          print(success);
-        });
+  void _onSignup(BuildContext context) async {
+    final success = await _signUpViewModel.createUserWithEmailAndPassword(
+      email: _signUpViewModel.emailController.text,
+      password: _signUpViewModel.passwordController.text,
+      displayName: _signUpViewModel.nameController.text,
+    );
+
+    if (!context.mounted) return;
+    if (success) {
+      Navigator.of(context).pushReplacementNamed(AppRoute.home.name);
+    } else {
+      final String errorMessage = _signUpViewModel.errorMessage ?? "";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          duration: const Duration(milliseconds: 5000),
+          width: 280.0, // Width of the SnackBar.
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0, // Inner padding for SnackBar content.
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -115,7 +134,7 @@ class _SignupButton extends StatelessWidget {
       listenable: _signUpViewModel,
       builder: (context, child) {
         return FilledButton(
-          onPressed: _onSignup,
+          onPressed: () => _onSignup(context),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 20),
             shape: RoundedRectangleBorder(

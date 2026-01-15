@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/routes.dart';
+import 'package:food_delivery_app/widgets/category_list_view.dart';
+import 'package:food_delivery_app/widgets/restaurant_list_view.dart';
 import 'package:food_delivery_app/widgets/search_bar.dart';
 import 'package:food_delivery_app/widgets/top_bar.dart';
 
@@ -34,29 +36,18 @@ class HomePage extends StatelessWidget {
                 hintText: 'Search dishes, restaurants',
               ),
               const SizedBox(height: 32),
-              Column(
-                children: [
-                  _HomeLabel("All Categories", onPressed: () {}),
-                  // ListView(
-                  //   scrollDirection: .horizontal,
-                  //   children: [
-                  //     Stack(
-                  //       children: [
-                  //         Container(
-                  //           width: 147,
-                  //           height: 147,
-                  //           decoration: BoxDecoration(
-                  //             color: colors.secondaryContainer,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ],
-                  // ),
-                ],
-              ),
-              Column(
-                children: [_HomeLabel("Open Restaurants", onPressed: () {})],
+              _HomeLabel("All Categories", onPressed: () {}),
+              const SizedBox(height: 20),
+              const CategoryListView(),
+              const SizedBox(height: 20),
+              Expanded(
+                child: Column(
+                  children: [
+                    _HomeLabel("Open Restaurants", onPressed: () {}),
+                    const SizedBox(height: 20),
+                    Expanded(child: RestaurantListView()),
+                  ],
+                ),
               ),
             ],
           ),

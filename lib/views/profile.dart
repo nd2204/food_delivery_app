@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/routes.dart';
 import 'package:food_delivery_app/viewmodels/profile_view_model.dart';
 import 'package:food_delivery_app/widgets/top_bar.dart';
 
@@ -25,8 +26,11 @@ class _ProfilePageState extends State<ProfilePage> {
     _profileViewModel.dispose();
   }
 
-  void _onLogout() {
-    _profileViewModel.signOut();
+  void _onLogout(BuildContext context) async {
+    await _profileViewModel.signOut();
+
+    if (!context.mounted) return;
+    Navigator.of(context).pushReplacementNamed(AppRoute.authLogin.name);
   }
 
   @override
@@ -116,6 +120,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.notifications_none,
                         iconColor: Colors.orange,
                         title: "Notifications",
+                        onTap: () {
+                          Navigator.of(
+                            context,
+                          ).pushNamed(AppRoute.notification.name);
+                        },
                       ),
                       _buildTile(
                         icon: Icons.credit_card,
@@ -151,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.logout,
                         iconColor: Colors.red,
                         title: "Log Out",
-                        onTap: _onLogout,
+                        onTap: () => _onLogout(context),
                       ),
                     ]),
 
